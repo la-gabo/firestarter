@@ -1,0 +1,43 @@
+### List all tasks
+GET http://localhost:4000/api/tasks
+Content-Type: application/json
+
+###
+
+### Get a single task by ID
+GET http://localhost:4000/api/tasks/1
+Content-Type: application/json
+
+###
+
+### Create a new task
+POST http://localhost:4000/api/tasks
+Content-Type: application/json
+
+{
+   "task": {
+     "title": "New Task",
+     "completed": false
+   }
+}
+
+###
+
+### Update an existing task
+PUT http://localhost:4000/api/tasks/1
+Content-Type: application/json
+
+{
+   "task": {
+     "title": "Updated Task Title",
+     "completed": true
+   }
+}
+
+###
+
+### Delete a task
+DELETE http://localhost:4000/api/tasks/1
+Content-Type: application/json
+
+###
