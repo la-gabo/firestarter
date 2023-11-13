@@ -28,6 +28,9 @@ defmodule FirestarterWeb.Router do
     get "/roll/:num_dice", RollController, :show
 
     resources "/tasks", TaskController, except: [:new, :edit]
+    resources "/users", UserController, except: [:new, :edit]
+
+    post "/sessions", SessionController, :create
   end
 
   # Enables LiveDashboard only for development

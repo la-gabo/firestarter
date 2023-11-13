@@ -72,3 +72,8 @@ config :phoenix, :stacktrace_depth, 20
 
 # Initialize plugs at runtime for faster development compilation
 config :phoenix, :plug_init_mode, :runtime
+
+# guardian of the auth
+config :firestarter, FirestarterWeb.Guardian,
+  issuer: "firestarter",
+  secret_key: System.get_env("GUARDIAN_SECRET_KEY")

@@ -41,3 +41,56 @@ DELETE http://localhost:4000/api/tasks/1
 Content-Type: application/json
 
 ###
+
+### List all users
+GET http://localhost:4000/api/users
+Content-Type: application/json
+
+###
+
+### Get a single user by ID
+GET http://localhost:4000/api/users/1
+Content-Type: application/json
+
+###
+
+### Create a new user
+POST http://localhost:4000/api/users
+Content-Type: application/json
+
+{
+   "user": {
+     "email": "hashednato@example.com",
+     "password": "password123"
+   }
+}
+
+###
+
+### Update an existing user
+PUT http://localhost:4000/api/users/1
+Content-Type: application/json
+
+{
+   "user": {
+     "email": "updateduser@example.com",
+     "password_hash": "updatedhashedpassword"
+   }
+}
+
+###
+
+### Delete a user
+DELETE http://localhost:4000/api/users/1
+Content-Type: application/json
+
+###
+
+### Login and receive token
+POST http://localhost:4000/api/sessions
+Content-Type: application/json
+
+{
+  "email": "hashednato@example.com",
+  "password": "password123"
+}
