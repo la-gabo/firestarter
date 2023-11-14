@@ -1,22 +1,27 @@
+@token = eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJmaXJlc3RhcnRlciIsImV4cCI6MTcwMjM2MzI5NCwiaWF0IjoxNjk5OTQ0MDk0LCJpc3MiOiJmaXJlc3RhcnRlciIsImp0aSI6IjdkZGY0OGE1LTFiNWQtNGQ2Yi1hYzQyLTBjMzBiMzEzODAwOCIsIm5iZiI6MTY5OTk0NDA5Mywic3ViIjoiNiIsInR5cCI6ImFjY2VzcyJ9.f9ddj2GnzTg_lx0oPQluQU13H3hC3U1SQgOSrHdhAOS031bBxgrSI-_nyVjWA0XpzNiszFQrMDgz_Amdr4vKMQ
+
 ### List all tasks
 GET http://localhost:4000/api/tasks
 Content-Type: application/json
+Authorization: Bearer {{token}}
 
 ###
 
 ### Get a single task by ID
 GET http://localhost:4000/api/tasks/1
 Content-Type: application/json
+Authorization: Bearer {{token}}
 
 ###
 
 ### Create a new task
 POST http://localhost:4000/api/tasks
 Content-Type: application/json
+Authorization: Bearer {{token}}
 
 {
    "task": {
-     "title": "New Task",
+     "title": "2nd Task",
      "completed": false
    }
 }
@@ -24,12 +29,13 @@ Content-Type: application/json
 ###
 
 ### Update an existing task
-PUT http://localhost:4000/api/tasks/1
+PUT http://localhost:4000/api/tasks/2
 Content-Type: application/json
+Authorization: Bearer {{token}}
 
 {
    "task": {
-     "title": "Updated Task Title",
+     "title": "Updated 2nd Title",
      "completed": true
    }
 }
@@ -39,24 +45,28 @@ Content-Type: application/json
 ### Delete a task
 DELETE http://localhost:4000/api/tasks/1
 Content-Type: application/json
+Authorization: Bearer {{token}}
 
 ###
 
 ### List all users
 GET http://localhost:4000/api/users
 Content-Type: application/json
+Authorization: Bearer {{token}}
 
 ###
 
 ### Get a single user by ID
 GET http://localhost:4000/api/users/1
 Content-Type: application/json
+Authorization: Bearer {{token}}
 
 ###
 
 ### Create a new user
 POST http://localhost:4000/api/users
 Content-Type: application/json
+Authorization: Bearer {{token}}
 
 {
    "user": {
@@ -70,6 +80,7 @@ Content-Type: application/json
 ### Update an existing user
 PUT http://localhost:4000/api/users/1
 Content-Type: application/json
+Authorization: Bearer {{token}}
 
 {
    "user": {
@@ -83,6 +94,7 @@ Content-Type: application/json
 ### Delete a user
 DELETE http://localhost:4000/api/users/1
 Content-Type: application/json
+Authorization: Bearer {{token}}
 
 ###
 

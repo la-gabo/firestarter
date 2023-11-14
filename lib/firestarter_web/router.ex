@@ -14,6 +14,11 @@ defmodule FirestarterWeb.Router do
     plug :accepts, ["json"]
   end
 
+  pipeline :api_auth do
+    plug FirestarterWeb.AuthPipeline
+  end
+
+
   scope "/", FirestarterWeb do
     pipe_through :browser
 
@@ -22,16 +27,21 @@ defmodule FirestarterWeb.Router do
 
   # Other scopes may use custom stacks.
   scope "/api", FirestarterWeb do
-    pipe_through :api
+    pipe_through [:api, :api_auth]
 
     get "/roll", RollController, :index
     get "/roll/:num_dice", RollController, :show
 
     resources "/tasks", TaskController, except: [:new, :edit]
     resources "/users", UserController, except: [:new, :edit]
-
-    post "/sessions", SessionController, :create
   end
+
+  scope "/api", FirestarterWeb do
+    pipe_through :api
+
+    post "/sessions", SessionController, :create  # This will not use the api_auth pipeline
+  end
+
 
   # Enables LiveDashboard only for development
   #

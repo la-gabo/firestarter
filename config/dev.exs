@@ -77,3 +77,7 @@ config :phoenix, :plug_init_mode, :runtime
 config :firestarter, FirestarterWeb.Guardian,
   issuer: "firestarter",
   secret_key: System.get_env("GUARDIAN_SECRET_KEY")
+
+config :firestarter, FirestarterWeb.AuthPipeline,
+  module: FirestarterWeb.Guardian,
+  error_handler: FirestarterWeb.AuthErrorHandler
