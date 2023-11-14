@@ -29,6 +29,8 @@ defmodule FirestarterWeb.Router do
     pipe_through :api
 
     post "/sessions", SessionController, :create
+    delete "/sessions", SessionController, :delete
+    post "/refresh_token", SessionController, :refresh
     post "/users", UserController, :create
   end
 

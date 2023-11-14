@@ -105,3 +105,11 @@ Content-Type: application/json
   "email": "monsythejrt@example.com",
   "password": "Cutepassw0rd!"
 }
+
+### Refresh Access Token
+POST http://localhost:4000/api/refresh_token
+Content-Type: application/json
+
+{
+  "refresh_token": "3lyBUpmxFYlcKPs3hqmWZRLOKHBNf6wdpbz-b05EQ4D5jYfaS3lxavDHLanZJVwLHpfUS9rzgXfN4alVgatx2Q=="
+}
