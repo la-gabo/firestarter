@@ -1,4 +1,4 @@
-@token = eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJmaXJlc3RhcnRlciIsImV4cCI6MTcwMjM2MzI5NCwiaWF0IjoxNjk5OTQ0MDk0LCJpc3MiOiJmaXJlc3RhcnRlciIsImp0aSI6IjdkZGY0OGE1LTFiNWQtNGQ2Yi1hYzQyLTBjMzBiMzEzODAwOCIsIm5iZiI6MTY5OTk0NDA5Mywic3ViIjoiNiIsInR5cCI6ImFjY2VzcyJ9.f9ddj2GnzTg_lx0oPQluQU13H3hC3U1SQgOSrHdhAOS031bBxgrSI-_nyVjWA0XpzNiszFQrMDgz_Amdr4vKMQ
+@token = eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJmaXJlc3RhcnRlciIsImV4cCI6MTY5OTk1MjYyNiwiaWF0IjoxNjk5OTUwODI2LCJpc3MiOiJmaXJlc3RhcnRlciIsImp0aSI6IjEwMGFlZGJhLWYwNjQtNDQ5Zi04NWU1LWJlMzE5NDYyMTI0MCIsIm5iZiI6MTY5OTk1MDgyNSwic3ViIjoiOCIsInR5cCI6ImFjY2VzcyJ9.uLNihaLAADLWIG5P2jbkGfo2uosAJnlb8PVzENVs-h6mH1E4b1NF6ZH_ydRh0xDBw__cnYzZWPsvCmapO4v0hg
 
 ### List all tasks
 GET http://localhost:4000/api/tasks
@@ -21,7 +21,7 @@ Authorization: Bearer {{token}}
 
 {
    "task": {
-     "title": "2nd Task",
+     "title": "3rd Task",
      "completed": false
    }
 }
@@ -29,13 +29,13 @@ Authorization: Bearer {{token}}
 ###
 
 ### Update an existing task
-PUT http://localhost:4000/api/tasks/2
+PUT http://localhost:4000/api/tasks/3
 Content-Type: application/json
 Authorization: Bearer {{token}}
 
 {
    "task": {
-     "title": "Updated 2nd Title",
+     "title": "Updated 3rd Title",
      "completed": true
    }
 }
