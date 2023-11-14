@@ -1,4 +1,8 @@
 defmodule FirestarterWeb.UserController do
+  @moduledoc """
+  Provides actions for managing users.
+  """
+
   use FirestarterWeb, :controller
 
   alias Firestarter.Accounts
@@ -6,11 +10,17 @@ defmodule FirestarterWeb.UserController do
 
   action_fallback FirestarterWeb.FallbackController
 
+  @doc """
+  Lists all users.
+  """
   def index(conn, _params) do
     users = Accounts.list_users()
     render(conn, "index.json", users: users)
   end
 
+  @doc """
+  Creates a user and renders the user if successful.
+  """
   def create(conn, %{"user" => user_params}) do
     with {:ok, %User{} = user} <- Accounts.create_user(user_params) do
       conn
@@ -20,11 +30,17 @@ defmodule FirestarterWeb.UserController do
     end
   end
 
+  @doc """
+  Renders a single user.
+  """
   def show(conn, %{"id" => id}) do
     user = Accounts.get_user!(id)
     render(conn, "show.json", user: user)
   end
 
+  @doc """
+  Updates a user's information.
+  """
   def update(conn, %{"id" => id, "user" => user_params}) do
     user = Accounts.get_user!(id)
 
@@ -33,6 +49,9 @@ defmodule FirestarterWeb.UserController do
     end
   end
 
+  @doc """
+  Deletes a user.
+  """
   def delete(conn, %{"id" => id}) do
     user = Accounts.get_user!(id)
 

@@ -38,21 +38,27 @@ defmodule Firestarter.Accounts do
   def get_user!(id), do: Repo.get!(User, id)
 
   @doc """
-  Creates a user.
+  Creates a user with a hashed password.
 
   ## Examples
 
-      iex> create_user(%{field: value})
+      iex> create_user(%{"email" => "user@example.com", "password" => "passw0rd"})
       {:ok, %User{}}
 
-      iex> create_user(%{field: bad_value})
+      iex> create_user(%{"email" => "user@example.com"})
       {:error, %Ecto.Changeset{}}
-
   """
   def create_user(attrs \\ %{}) do
-    %User{}
-    |> User.changeset(attrs)
-    |> Repo.insert()
+    changeset = User.changeset(%User{}, attrs)
+
+    if changeset.valid? do
+      {:ok, hashed_password} = Bcrypt.hash_pwd_salt(changeset.changes.password)
+      changeset
+      |> Ecto.Changeset.put_change(:password_hash, hashed_password)
+      |> Repo.insert()
+    else
+      {:error, changeset}
+    end
   end
 
   @doc """

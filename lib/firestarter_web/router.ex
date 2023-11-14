@@ -25,6 +25,13 @@ defmodule FirestarterWeb.Router do
     get "/", PageController, :index
   end
 
+  scope "/api", FirestarterWeb do
+    pipe_through :api
+
+    post "/sessions", SessionController, :create
+    post "/users", UserController, :create
+  end
+
   # Other scopes may use custom stacks.
   scope "/api", FirestarterWeb do
     pipe_through [:api, :api_auth]
@@ -33,15 +40,8 @@ defmodule FirestarterWeb.Router do
     get "/roll/:num_dice", RollController, :show
 
     resources "/tasks", TaskController, except: [:new, :edit]
-    resources "/users", UserController, except: [:new, :edit]
+    resources "/users", UserController, except: [:new, :edit, :create]
   end
-
-  scope "/api", FirestarterWeb do
-    pipe_through :api
-
-    post "/sessions", SessionController, :create  # This will not use the api_auth pipeline
-  end
-
 
   # Enables LiveDashboard only for development
   #

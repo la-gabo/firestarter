@@ -76,7 +76,11 @@ config :phoenix, :plug_init_mode, :runtime
 # guardian of the auth
 config :firestarter, FirestarterWeb.Guardian,
   issuer: "firestarter",
-  secret_key: System.get_env("GUARDIAN_SECRET_KEY")
+  secret_key: System.get_env("GUARDIAN_SECRET_KEY"),
+  token_ttl: %{
+    "access" => {30, :minutes},
+    "refresh" => {7, :days}
+  }
 
 config :firestarter, FirestarterWeb.AuthPipeline,
   module: FirestarterWeb.Guardian,
