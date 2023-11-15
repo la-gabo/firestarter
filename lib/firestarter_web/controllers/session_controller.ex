@@ -36,8 +36,22 @@ defmodule FirestarterWeb.SessionController do
   end
 
   # DELETE /api/sessions
-  def delete(conn, _) do
-    # Here you would handle logout logic, like revoking tokens or clearing session data
-    json(conn, %{message: "User logged out successfully"})
+  def delete(conn, %{"refresh_token" => refresh_token}) do
+    case Accounts.revoke_refresh_token(refresh_token) do
+      :ok ->
+        conn
+        |> put_status(:ok)
+        |> json(%{message: "User logged out successfully"})
+
+      {:error, :not_found} ->
+        conn
+        |> put_status(:not_found)
+        |> json(%{error: "Refresh token not found"})
+
+      {:error, _reason} ->
+        conn
+        |> put_status(:internal_server_error)
+        |> json(%{error: "Could not revoke the refresh token"})
+    end
   end
 end

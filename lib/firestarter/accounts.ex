@@ -172,4 +172,20 @@ defmodule Firestarter.Accounts do
       {:error, _changeset} -> {:error, :could_not_create_token}
     end
   end
+
+  def revoke_refresh_token(refresh_token_string) do
+    case Repo.get_by(RefreshToken, token: refresh_token_string) do
+      nil ->
+        {:error, :not_found}
+
+      refresh_token ->
+        case Repo.delete(refresh_token) do
+          {:ok, _} ->
+            :ok
+
+          {:error, reason} ->
+            {:error, reason}
+        end
+    end
+  end
 end

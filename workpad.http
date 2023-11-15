@@ -1,4 +1,4 @@
-@token = eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJmaXJlc3RhcnRlciIsImV4cCI6MTY5OTk1MjYyNiwiaWF0IjoxNjk5OTUwODI2LCJpc3MiOiJmaXJlc3RhcnRlciIsImp0aSI6IjEwMGFlZGJhLWYwNjQtNDQ5Zi04NWU1LWJlMzE5NDYyMTI0MCIsIm5iZiI6MTY5OTk1MDgyNSwic3ViIjoiOCIsInR5cCI6ImFjY2VzcyJ9.uLNihaLAADLWIG5P2jbkGfo2uosAJnlb8PVzENVs-h6mH1E4b1NF6ZH_ydRh0xDBw__cnYzZWPsvCmapO4v0hg
+@token = eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJmaXJlc3RhcnRlciIsImV4cCI6MTcwMDAzMjMxNywiaWF0IjoxNzAwMDMwNTE3LCJpc3MiOiJmaXJlc3RhcnRlciIsImp0aSI6IjM5MzgxZTVhLTM3OTEtNGJmOS1hNDllLWU0ODdmMDIyMzE4ZSIsIm5iZiI6MTcwMDAzMDUxNiwic3ViIjoiOCIsInR5cCI6ImFjY2VzcyJ9.S0MGRUT7fYRULericvzhzlEl94Pl5G4njcL5EuYm-qGCCClJqtlGQT5hXtWXz5gnDG4PvGf4n4fqGoX-wm2NXA
 
 ### List all tasks
 GET http://localhost:4000/api/tasks
@@ -111,5 +111,13 @@ POST http://localhost:4000/api/refresh_token
 Content-Type: application/json
 
 {
-  "refresh_token": "3lyBUpmxFYlcKPs3hqmWZRLOKHBNf6wdpbz-b05EQ4D5jYfaS3lxavDHLanZJVwLHpfUS9rzgXfN4alVgatx2Q=="
+  "refresh_token": "B67eLYMo1Fj6hITkmFH5dgLquZPbkP1w7SH-lBdzwKRGVFj2bfH-7Ac-WwYOsnAcURI6RQMQ0MMWwAZoAeGLuw=="
+}
+
+### Delete session with refresh token
+DELETE http://localhost:4000/api/sessions
+Content-Type: application/json
+
+{
+  "refresh_token": "leRnsZZRFKiRAkSRlYzAu902WBT6ts0aEYvqVpIftZzD6RDEYOJiLJ--H4N01bmY_zZEpNtwX2ToYGjPD7yTkQ=="
 }
