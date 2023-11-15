@@ -19,8 +19,8 @@ defmodule Firestarter.Tasks.Task do
   """
   def changeset(task, attrs) do
     task
-    |> cast(attrs, [:title, :completed])
-    |> validate_required([:title])
+    |> cast(attrs, [:title, :completed, :rank])
+    |> validate_required([:title, :rank])
     |> validate_length(:title, min: 3, max: 100)
   end
 end

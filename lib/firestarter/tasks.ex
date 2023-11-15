@@ -104,4 +104,15 @@ defmodule Firestarter.Tasks do
   def change_task(%Task{} = task, attrs \\ %{}) do
     Task.changeset(task, attrs)
   end
+
+  def reorder_task(id, above_id, below_id) do
+    above_task = get_task(above_id)
+    below_task = get_task(below_id)
+    new_rank = Firestarter.Tasks.Ranking.generate_rank(above_task.rank, below_task.rank)
+
+    task = Repo.get!(Task, id)
+    changeset = Task.changeset(task, %{rank: new_rank})
+
+    Repo.update(changeset)
+  end
 end

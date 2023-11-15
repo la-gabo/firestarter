@@ -9,11 +9,12 @@ defmodule FirestarterWeb.SessionController do
       {:ok, user} ->
         {:ok, access_token, _full_claims} = FirestarterWeb.Guardian.encode_and_sign(user)
         {:ok, refresh_token} = Accounts.generate_refresh_token(user)
+        max_age = 30 * 24 * 60 * 60 # Example: 30 days in seconds
 
-        json(conn, %{
-          access_token: access_token,
-          refresh_token: refresh_token
-        })
+        # secure token storage using cookies
+        conn
+        |> put_resp_cookie("refresh_token", refresh_token, http_only: true, secure: true, max_age: max_age)
+        |> json(%{access_token: access_token, refresh_token: refresh_token})
 
       {:error, _reason} ->
         conn
@@ -21,8 +22,6 @@ defmodule FirestarterWeb.SessionController do
         |> json(%{error: "Invalid credentials"})
     end
   end
-
-
 
   def refresh(conn, %{"refresh_token" => refresh_token}) do
     case Accounts.exchange_refresh_token_for_jwt(refresh_token) do

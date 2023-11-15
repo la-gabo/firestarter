@@ -1,4 +1,4 @@
-@token = eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJmaXJlc3RhcnRlciIsImV4cCI6MTcwMDAzMjMxNywiaWF0IjoxNzAwMDMwNTE3LCJpc3MiOiJmaXJlc3RhcnRlciIsImp0aSI6IjM5MzgxZTVhLTM3OTEtNGJmOS1hNDllLWU0ODdmMDIyMzE4ZSIsIm5iZiI6MTcwMDAzMDUxNiwic3ViIjoiOCIsInR5cCI6ImFjY2VzcyJ9.S0MGRUT7fYRULericvzhzlEl94Pl5G4njcL5EuYm-qGCCClJqtlGQT5hXtWXz5gnDG4PvGf4n4fqGoX-wm2NXA
+@token = eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJmaXJlc3RhcnRlciIsImV4cCI6MTcwMDAzNjQ2MywiaWF0IjoxNzAwMDM0NjYzLCJpc3MiOiJmaXJlc3RhcnRlciIsImp0aSI6ImVkMmNkZmFmLTZkMmYtNGFhYy1hOTQ5LTVkY2RmZDRhMDM1ZiIsIm5iZiI6MTcwMDAzNDY2Miwic3ViIjoiOCIsInR5cCI6ImFjY2VzcyJ9.gf4OY_oXXz6DEYLBC2ujlG49J6hGZO7UfKMP1HdCM5On_6LfmF9uZlS-DiFNf23-5ae0qDeKKu-f345KdBr_JA
 
 ### List all tasks
 GET http://localhost:4000/api/tasks
@@ -8,7 +8,7 @@ Authorization: Bearer {{token}}
 ###
 
 ### Get a single task by ID
-GET http://localhost:4000/api/tasks/1
+GET http://localhost:4000/api/tasks/4
 Content-Type: application/json
 Authorization: Bearer {{token}}
 
@@ -21,21 +21,22 @@ Authorization: Bearer {{token}}
 
 {
    "task": {
-     "title": "3rd Task",
-     "completed": false
+     "title": "New Task",
+     "completed": false,
+     "rank": "1"
    }
 }
 
 ###
 
 ### Update an existing task
-PUT http://localhost:4000/api/tasks/3
+PUT http://localhost:4000/api/tasks/4
 Content-Type: application/json
 Authorization: Bearer {{token}}
 
 {
    "task": {
-     "title": "Updated 3rd Title",
+     "title": "Updated New Task",
      "completed": true
    }
 }
@@ -43,7 +44,7 @@ Authorization: Bearer {{token}}
 ###
 
 ### Delete a task
-DELETE http://localhost:4000/api/tasks/1
+DELETE http://localhost:4000/api/tasks/4
 Content-Type: application/json
 Authorization: Bearer {{token}}
 

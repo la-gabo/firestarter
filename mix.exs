@@ -52,6 +52,7 @@ defmodule Firestarter.MixProject do
       {:dotenvy, "~> 0.8.0"},
       {:guardian, "~> 2.1"},
       {:bcrypt_elixir, "~> 2.0"},
+      {:plug_crypto, "~> 1.0"},
     ]
   end
 

@@ -128,6 +128,7 @@ defmodule Firestarter.Accounts do
     end
   end
 
+  # TODO: prevent timing attacks
   defp verify_and_revoke_refresh_token(refresh_token) do
     case Repo.get_by(RefreshToken, token: refresh_token) do
       nil -> {:error, :invalid_token}
