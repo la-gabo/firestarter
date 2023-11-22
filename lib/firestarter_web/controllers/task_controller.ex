@@ -15,8 +15,15 @@ defmodule FirestarterWeb.TaskController do
     - _params: A map of parameters (unused in this function)
   """
   def index(conn, _params) do
-    tasks = Tasks.list_tasks()
-    render(conn, "index.json", tasks: tasks)
+    case get_user_id_from_token(conn) do
+      {:ok, user_id} ->
+        tasks = Tasks.list_tasks_for_user(user_id)
+        render(conn, "index.json", tasks: tasks)
+      {:error, _reason} ->
+        conn
+        |> put_status(:unathorized)
+        |> json(%{error: "unauthorized"})
+    end
   end
 
   @doc """
@@ -28,10 +35,25 @@ defmodule FirestarterWeb.TaskController do
     - "task": A map containing the task params
   """
   def create(conn, %{"task" => task_params}) do
-    with {:ok, %Task{} = task} <- Tasks.create_task(task_params) do
-      conn
-      |> put_status(:created)
-      |> render("show.json", task: task)
+    case get_user_id_from_token(conn) do
+      {:ok, user_id} ->
+        modified_task_params = Map.put(task_params, "user_id", user_id)
+        with {:ok, %Task{} = task} <- Tasks.create_task(modified_task_params) do
+          conn
+          |> put_status(:created)
+          |> render("show.json", task: task)
+        end
+      {:error, _reason} ->
+        conn
+        |> put_status(:unathorized)
+        |> json(%{error: "Unathorized"})
+    end
+  end
+
+  defp get_user_id_from_token(conn) do
+    case Guardian.Plug.current_resource(conn) do
+      nil -> {:error, :no_user}
+      user -> {:ok, user.id}
     end
   end
 
@@ -44,13 +66,20 @@ defmodule FirestarterWeb.TaskController do
     - "id": The ID of the task to show
   """
   def show(conn, %{"id" => id}) do
-    case Tasks.get_task(id) do
-      nil ->
+    case get_user_id_from_token(conn) do
+      {:ok, user_id} ->
+        case Tasks.get_task_for_user(id, user_id) do
+          nil ->
+            conn
+            |> put_status(:not_found)
+            |> json(%{message: "Task not found or unauthorized"})
+          task ->
+            render(conn, "show.json", task: task)
+        end
+      {:error, _reason} ->
         conn
-        |> put_status(:not_found)
-        |> json(%{message: "Task not found"})
-      task ->
-        render(conn, "show.json", task: task)
+        |> put_status(:unauthorized)
+        |> json(%{error: "unathorized"})
     end
   end
 
@@ -97,12 +126,12 @@ defmodule FirestarterWeb.TaskController do
     end
   end
 
-  def reorder(conn, %{"id" => id, "above_id" => above_id, "below_id" => below_id}) do
-    case Tasks.reorder_task(id, above_id, below_id) do
-      {:ok, task} ->
-        conn |> put_status(:ok) |> json(%{task: task})
-      {:error, changeset} ->
-        conn |> put_status(:unprocessable_entity) |> json(%{errors: changeset.errors})
-    end
-  end
+  # def reorder(conn, %{"id" => id, "above_id" => above_id, "below_id" => below_id}) do
+  #   case Tasks.reorder_task(id, above_id, below_id) do
+  #     {:ok, task} ->
+  #       conn |> put_status(:ok) |> json(%{task: task})
+  #     {:error, changeset} ->
+  #       conn |> put_status(:unprocessable_entity) |> json(%{errors: changeset.errors})
+  #   end
+  # end
 end

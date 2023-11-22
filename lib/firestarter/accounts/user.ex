@@ -17,6 +17,8 @@ defmodule Firestarter.Accounts.User do
     field :password_hash, :string, redact: true
     field :password, :string, virtual: true, redact: true
 
+    has_many :tasks, Firestarter.Tasks.Task
+
     timestamps()
   end
 

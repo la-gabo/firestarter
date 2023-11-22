@@ -21,6 +21,10 @@ defmodule Firestarter.Tasks do
     Repo.all(Task)
   end
 
+  def list_tasks_for_user(user_id) do
+    from(t in Task, where: t.user_id == ^user_id) |> Repo.all()
+  end
+
   @doc """
   Gets a single task.
 
@@ -37,6 +41,10 @@ defmodule Firestarter.Tasks do
   """
   def get_task(id) do
     Repo.get(Task, id)
+  end
+
+  def get_task_for_user(task_id, user_id) do
+    Repo.get_by(Task, [id: task_id, user_id: user_id])
   end
 
 
@@ -105,14 +113,14 @@ defmodule Firestarter.Tasks do
     Task.changeset(task, attrs)
   end
 
-  def reorder_task(id, above_id, below_id) do
-    above_task = get_task(above_id)
-    below_task = get_task(below_id)
-    new_rank = Firestarter.Tasks.Ranking.generate_rank(above_task.rank, below_task.rank)
+  # def reorder_task(id, above_id, below_id) do
+  #   above_task = get_task(above_id)
+  #   below_task = get_task(below_id)
+  #   new_rank = Firestarter.Tasks.Ranking.generate_rank(above_task.rank, below_task.rank)
 
-    task = Repo.get!(Task, id)
-    changeset = Task.changeset(task, %{rank: new_rank})
+  #   task = Repo.get!(Task, id)
+  #   changeset = Task.changeset(task, %{rank: new_rank})
 
-    Repo.update(changeset)
-  end
+  #   Repo.update(changeset)
+  # end
 end

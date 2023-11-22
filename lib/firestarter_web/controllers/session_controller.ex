@@ -7,19 +7,24 @@ defmodule FirestarterWeb.SessionController do
   def create(conn, %{"email" => email, "password" => password}) do
     case Accounts.authenticate_user(email, password) do
       {:ok, user} ->
-        {:ok, access_token, _full_claims} = FirestarterWeb.Guardian.encode_and_sign(user)
+        jwt_claims = %{user_id: user.id}
+        {:ok, access_token, _full_claims} = FirestarterWeb.Guardian.encode_and_sign(user, jwt_claims)
         {:ok, refresh_token} = Accounts.generate_refresh_token(user)
         max_age = 30 * 24 * 60 * 60 # Example: 30 days in seconds
 
+        conn = assign(conn, :access_token, access_token)
+
         # secure token storage using cookies
         conn
+        |> put_session(:access_token, access_token) # Store access token in session
         |> put_resp_cookie("refresh_token", refresh_token, http_only: true, secure: true, max_age: max_age)
-        |> json(%{access_token: access_token, refresh_token: refresh_token})
+        |> redirect(to: "/tasks") # Redirect to tasks page after successful login
 
       {:error, _reason} ->
         conn
         |> put_status(:unauthorized)
         |> json(%{error: "Invalid credentials"})
+        |> redirect(to: "/login")
     end
   end
 

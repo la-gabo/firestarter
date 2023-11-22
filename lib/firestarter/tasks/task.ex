@@ -10,6 +10,8 @@ defmodule Firestarter.Tasks.Task do
     field :completed, :boolean, default: false
     field :rank, :string
 
+    belongs_to :user, Firestarter.Accounts.User
+
     timestamps()
   end
 
@@ -19,8 +21,8 @@ defmodule Firestarter.Tasks.Task do
   """
   def changeset(task, attrs) do
     task
-    |> cast(attrs, [:title, :completed, :rank])
-    |> validate_required([:title, :rank])
+    |> cast(attrs, [:title, :completed, :rank, :user_id])
+    |> validate_required([:title, :user_id])
     |> validate_length(:title, min: 3, max: 100)
   end
 end

@@ -12,6 +12,7 @@ defmodule FirestarterWeb.Router do
 
   pipeline :api do
     plug :accepts, ["json"]
+    plug :fetch_session
   end
 
   pipeline :api_auth do
@@ -23,6 +24,9 @@ defmodule FirestarterWeb.Router do
     pipe_through :browser
 
     get "/", PageController, :index
+    live "/login", LoginLive
+    live "/foo", FooLive
+    live "/tasks", TasksLive
   end
 
   scope "/api", FirestarterWeb do

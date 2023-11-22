@@ -1,4 +1,4 @@
-@token = eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJmaXJlc3RhcnRlciIsImV4cCI6MTcwMDAzNjQ2MywiaWF0IjoxNzAwMDM0NjYzLCJpc3MiOiJmaXJlc3RhcnRlciIsImp0aSI6ImVkMmNkZmFmLTZkMmYtNGFhYy1hOTQ5LTVkY2RmZDRhMDM1ZiIsIm5iZiI6MTcwMDAzNDY2Miwic3ViIjoiOCIsInR5cCI6ImFjY2VzcyJ9.gf4OY_oXXz6DEYLBC2ujlG49J6hGZO7UfKMP1HdCM5On_6LfmF9uZlS-DiFNf23-5ae0qDeKKu-f345KdBr_JA
+@token = eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJmaXJlc3RhcnRlciIsImV4cCI6MTcwMDYzMzc4NywiaWF0IjoxNzAwNjMxOTg3LCJpc3MiOiJmaXJlc3RhcnRlciIsImp0aSI6IjYyMWUwNDFlLWIwZjMtNGVjMC1iNzNmLTExOTc0OWJlNmJiNSIsIm5iZiI6MTcwMDYzMTk4Niwic3ViIjoiOCIsInR5cCI6ImFjY2VzcyIsInVzZXJfaWQiOjh9.DFmtph996v7AwNRsgTuzZhxsuCDi-V15lSKidubCogpcJzLgzNf7w3Fi6Ina82qvRVIrZJEzgZHWRv5JYQWy7Q
 
 ### List all tasks
 GET http://localhost:4000/api/tasks
@@ -8,7 +8,7 @@ Authorization: Bearer {{token}}
 ###
 
 ### Get a single task by ID
-GET http://localhost:4000/api/tasks/4
+GET http://localhost:4000/api/tasks/17
 Content-Type: application/json
 Authorization: Bearer {{token}}
 
@@ -21,7 +21,7 @@ Authorization: Bearer {{token}}
 
 {
    "task": {
-     "title": "New Task",
+     "title": "User associated task num 5",
      "completed": false,
      "rank": "1"
    }
