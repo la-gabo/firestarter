@@ -24,6 +24,7 @@ defmodule Firestarter.TaskClient do
   Update a specific task for a user.
   """
   def update_user_task(access_token, task_id, task_params) do
+    IO.inspect(task_params, label: "UPDATING")
     headers = [{"Authorization", "Bearer #{access_token}"}]
     put("/tasks/#{task_id}", %{task: task_params}, headers: headers)
   end

@@ -92,13 +92,13 @@ defmodule FirestarterWeb.TaskController do
     - "id": The ID of the task to update
     - "task": A map containing the updated task params
   """
-  def update(conn, %{"id" => id, "task" => task_params}) do
-    task = Tasks.get_task(id)
+def update(conn, %{"id" => id, "task" => task_params}) do
+  task = Tasks.get_task(id)
 
-    with {:ok, %Task{} = task} <- Tasks.update_task(task, task_params) do
-      render(conn, "show.json", task: task)
-    end
+  with {:ok, %Task{} = task} <- Tasks.update_task(task, task_params) do
+    render(conn, "show.json", task: task)
   end
+end
 
   @doc """
   Deletes a task based on the ID provided.

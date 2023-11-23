@@ -14,7 +14,8 @@ defmodule FirestarterWeb.TaskView do
     %{
       id: task.id,
       title: task.title,
-      completed: task.completed
+      completed: task.completed,
+      rank: task.rank
     }
   end
 end

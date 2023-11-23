@@ -22,7 +22,7 @@ defmodule Firestarter.Tasks do
   end
 
   def list_tasks_for_user(user_id) do
-    from(t in Task, where: t.user_id == ^user_id) |> Repo.all()
+    from(t in Task, where: t.user_id == ^user_id, order_by: t.rank) |> Repo.all()
   end
 
   @doc """
@@ -61,10 +61,23 @@ defmodule Firestarter.Tasks do
 
   """
   def create_task(attrs \\ %{}) do
+    # Ensure attrs keys are atoms
+    atom_attrs = Enum.into(attrs, %{}, fn {k, v} -> {String.to_existing_atom(k), v} end)
+    user_id = atom_attrs[:user_id]
+
+    highest_rank =
+      Task
+      |> where([t], t.user_id == ^user_id)
+      |> select([t], max(type(t.rank, :integer)))
+      |> Repo.one()
+
+    new_rank = Integer.to_string((highest_rank || 0) + 1)
+
     %Task{}
-    |> Task.changeset(attrs)
+    |> Task.changeset(Map.put(atom_attrs, :rank, new_rank))
     |> Repo.insert()
   end
+
 
   @doc """
   Updates a task.
