@@ -30,40 +30,39 @@ defmodule FirestarterWeb.TasksLive do
 
   def render(assigns) do
     ~H"""
-    <h1>Tasks List</h1>
-    <ul>
-      <%= for task <- @tasks do %>
-        <li>
-          <%= if Enum.at(@tasks, 0)["id"] != task["id"] do %>
-            <button phx-click="move-up" phx-value-id={task["id"]}>Move up</button>
-          <% end %>
-
-          <%= if Enum.at(@tasks, Enum.count(@tasks) - 1)["id"] != task["id"] do %>
-            <button phx-click="move-down" phx-value-id={task["id"]}>Move down</button>
-          <% end %>
-          <%= if @editing_task_id do %>
-            <form phx-submit="save-task" phx-value-id={task["id"]}>
-              <input type="text" name="task_title" value={task["title"]} />
-              <button type="submit">Save</button>
-            </form>
-          <% else %>
-            <%= task["title"] %> - <%= if task["completed"], do: "Completed", else: "Pending" %>
-          <% end %>
-          <button phx-click="delete-task" phx-value-id={task["id"]}>Delete</button>
-          <button phx-click="toggle-completed" phx-value-id={task["id"]}>Toggle</button>
-
-        </li>
-      <% end %>
-    </ul>
-
-    <%= if @show_form do %>
-      <form phx-submit="add-task">
-        <input type="text" name="new_task_title" value={@new_task_title} />
-        <button type="submit">Add Task</button>
-      </form>
-    <% else %>
-      <button phx-click="show-form">Add Task</button>
-    <% end %>
+    <div class="todo-container">
+      <h1 class="todo-header">Tasks List</h1>
+      <ul class="todo-list">
+        <%= for task <- @tasks do %>
+          <li class={"todo-item " <> (if task["completed"], do: "completed", else: "")}>
+            <div class="task-content">
+              <span class="task-title"><%= task["title"] %></span>
+              <span class="task-status"><%= if task["completed"], do: "Completed", else: "Pending" %></span>
+            </div>
+            <div class="task-actions">
+              <%= if Enum.at(@tasks, 0)["id"] != task["id"] do %>
+                <button phx-click="move-up" phx-value-id={task["id"]}>⬆</button>
+              <% end %>
+              <%= if Enum.at(@tasks, Enum.count(@tasks) - 1)["id"] != task["id"] do %>
+                <button phx-click="move-down" phx-value-id={task["id"]}>⬇</button>
+              <% end %>
+              <button phx-click="toggle-completed" phx-value-id={task["id"]}><%= if task["completed"], do: "✗", else: "✓" %></button>
+              <button phx-click="delete-task" phx-value-id={task["id"]}>🗑</button>
+            </div>
+          </li>
+        <% end %>
+      </ul>
+      <div class="add-task-form">
+        <%= if @show_form do %>
+          <form phx-submit="add-task">
+            <input type="text" name="new_task_title" value={@new_task_title} placeholder="Add new task..." />
+            <button type="submit">Add</button>
+          </form>
+        <% else %>
+          <button phx-click="show-form">Add Task</button>
+        <% end %>
+      </div>
+    </div>
     """
   end
 
