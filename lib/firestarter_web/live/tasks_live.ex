@@ -48,7 +48,6 @@ defmodule FirestarterWeb.TasksLive do
             </form>
           <% else %>
             <%= task["title"] %> - <%= if task["completed"], do: "Completed", else: "Pending" %>
-            <%!-- <button phx-click="edit-task" phx-value-id={task["id"]}>Edit</button> --%>
           <% end %>
           <button phx-click="delete-task" phx-value-id={task["id"]}>Delete</button>
           <button phx-click="toggle-completed" phx-value-id={task["id"]}>Toggle</button>
@@ -160,18 +159,14 @@ defmodule FirestarterWeb.TasksLive do
     current_tasks = socket.assigns.tasks
     case find_task_index(current_tasks, id) do
       {:ok, index} ->
-        {_new_tasks, swapped_tasks} = swap_tasks(current_tasks, index, direction)
-        IO.inspect(swapped_tasks, label: "swapped_tasks")
-        unless Enum.empty?(swapped_tasks) do
-          update_task_ranks(socket, swapped_tasks)
-          fetch_and_refresh_tasks(socket)
-        end
+        {updated_tasks, swapped_tasks} = swap_tasks(current_tasks, index, direction)
+        update_task_ranks(socket, swapped_tasks)
+        # The update_task_ranks function now handles the re-assignment of tasks
+      :error ->
         {:noreply, socket}
-      :error -> {:noreply, socket}
     end
   end
 
-  # Find the index of a task by ID
   defp find_task_index(tasks, id) do
     Enum.find_index(tasks, fn task -> task["id"] == id end)
     |> case do
@@ -180,59 +175,46 @@ defmodule FirestarterWeb.TasksLive do
     end
   end
 
-
   defp swap_tasks(tasks, index, direction) do
-    # Determine the index of the task to swap with
     swap_index = case direction do
       :up -> index - 1
       :down -> index + 1
     end
 
-    # Ensure swap is within bounds
     if swap_index in 0..(length(tasks) - 1) do
       task1 = Enum.at(tasks, index)
       task2 = Enum.at(tasks, swap_index)
 
-      IO.inspect(task1, label: "task_1")
-      IO.inspect(task2, label: "task_2")
-      # Swap task ranks if both tasks exist and have a rank
       if task1 && task2 && task1["rank"] && task2["rank"] do
         task1_rank = task1["rank"]
         task1 = Map.put(task1, "rank", task2["rank"])
         task2 = Map.put(task2, "rank", task1_rank)
-
-        # Update the tasks list
         tasks = List.replace_at(tasks, index, task1)
         tasks = List.replace_at(tasks, swap_index, task2)
-
-        IO.inspect(tasks, label: "SWAP_TASKS")
-        {tasks, [task1, task2]}
+        {Enum.sort_by(tasks, & &1["rank"]), [task1, task2]}
       else
-        IO.puts("Cannot swap: One or both tasks do not have a rank.")
         {tasks, []}
       end
     else
-      IO.puts("Cannot swap: Task is at the boundary.")
       {tasks, []}
     end
   end
 
   defp update_task_ranks(socket, swapped_tasks) do
     access_token = socket.assigns.access_token
-    liveview_pid = self()
 
     Enum.each(swapped_tasks, fn task ->
-      IO.puts("Updating task #{task["id"]} with new rank #{task["rank"]}")
-      case TaskClient.update_user_task(access_token, task["id"], %{"rank" => task["rank"]}) do
-        {:ok, response} ->
-          IO.inspect(response, label: "Update Response")
-        {:error, reason} ->
-          IO.inspect(reason, label: "Update Error")
-          # Here you may want to handle the error, e.g., by sending a message to the LiveView or logging
-      end
+      TaskClient.update_user_task(access_token, task["id"], %{"rank" => task["rank"]})
     end)
 
-    # Send a message to self to trigger a refetch of tasks
-    send(liveview_pid, :refetch_tasks)
+    updated_tasks = update_task_ranks_local(socket.assigns.tasks, swapped_tasks)
+    updated_sorted_tasks = Enum.sort_by(updated_tasks, & &1["rank"])
+    {:noreply, socket |> assign(:tasks, updated_sorted_tasks)}
+  end
+
+  defp update_task_ranks_local(tasks, swapped_tasks) do
+    Enum.map(tasks, fn task ->
+      if swapped_task = Enum.find(swapped_tasks, &(&1["id"] == task["id"])), do: Map.put(task, "rank", swapped_task["rank"]), else: task
+    end)
   end
 end
