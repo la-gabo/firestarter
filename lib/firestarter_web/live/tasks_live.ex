@@ -14,10 +14,15 @@ defmodule FirestarterWeb.TasksLive do
     {:ok, socket}
   end
 
+  # move here no_reply, refactor for less nesting
   def handle_info({:tasks_fetched, tasks}, socket) do
     {:noreply, assign(socket, tasks: tasks)}
   end
 
+  # research on with for refactoring (if/else)
+  # research more on pattern matching, structs
+
+  # research and update to async
   defp fetch_tasks(access_token, liveview_pid) do
     case TaskClient.fetch_user_tasks(access_token) do
       {:ok, response} ->
@@ -32,9 +37,9 @@ defmodule FirestarterWeb.TasksLive do
     ~H"""
     <div class="todo-container">
       <h1 class="todo-header">Tasks List</h1>
-      <ul class="todo-list">
+      <ul class="todo-list" id="todo-list" phx-hook="Sortable">
         <%= for task <- @tasks do %>
-          <li class={"todo-item " <> (if task["completed"], do: "completed", else: "")}>
+          <li data-id={task["id"]} class={"todo-item " <> (if task["completed"], do: "completed", else: "")}>
             <div class="task-content">
               <span class="task-title"><%= task["title"] %></span>
               <span class="task-status"><%= if task["completed"], do: "Completed", else: "Pending" %></span>
@@ -65,6 +70,24 @@ defmodule FirestarterWeb.TasksLive do
     </div>
     """
   end
+
+  # move to templates
+  # pipe refactoring
+  # deconstruct liveview -> live_components
+  # def render(assigns) do
+  #   ~H"""
+  #     <div class="max-w-4xl mx-auto p-6 bg-gray-50 rounded-lg shadow">
+  #       <h1 class="text-3xl font-bold mb-4 text-center text-gray-800">Tasks List</h1>
+  #         <.live_component
+  #           id="1"
+  #           module={FirestarterWeb.ListComponent}
+  #           list={@tasks}
+  #           list_name="Tasks list"
+  #           new_task_title={@new_task_title}
+  #         />
+  #     </div>
+  #   """
+  # end
 
   # Handle event to add a task
   def handle_event("add-task", %{"new_task_title" => title}, socket) do
@@ -138,6 +161,14 @@ defmodule FirestarterWeb.TasksLive do
   def handle_event("move-down", %{"id" => id}, socket) do
     id = String.to_integer(id)
     move_task(socket, id, :down)
+  end
+
+  def handle_event("reposition", params, socket) do
+    #Put your logic here to deal with the changes to the list order
+    #and persist the data
+    # call reordering API here
+    IO.inspect(params)
+    {:noreply, socket}
   end
 
   # Helper function to fetch tasks and refresh the LiveView
@@ -216,4 +247,4 @@ defmodule FirestarterWeb.TasksLive do
       if swapped_task = Enum.find(swapped_tasks, &(&1["id"] == task["id"])), do: Map.put(task, "rank", swapped_task["rank"]), else: task
     end)
   end
-end
+  end
