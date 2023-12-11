@@ -70,7 +70,7 @@ Content-Type: application/json
 
 {
    "user": {
-     "email": "monsythejrt@exampsc",
+     "email": "monsythejrt@example.com",
      "password": "Cut1epass!"
    }
 }
