@@ -19,7 +19,9 @@ defmodule FirestarterWeb do
 
   def controller do
     quote do
-      use Phoenix.Controller, namespace: FirestarterWeb
+      use Phoenix.Controller,
+        formats: [:html, :json],
+        namespace: FirestarterWeb
 
       import Plug.Conn
       import FirestarterWeb.Gettext
@@ -47,13 +49,55 @@ defmodule FirestarterWeb do
       use Phoenix.LiveView,
         layout: {FirestarterWeb.LayoutView, "live.html"}
 
+      on_mount FirestarterWeb.Flash
+
       unquote(view_helpers())
+    end
+  end
+
+  def html do
+    quote do
+      use Phoenix.Component
+
+      # Import convenience functions from controllers
+      import Phoenix.Controller,
+        only: [get_csrf_token: 0, view_module: 1, view_template: 1]
+
+      # Include general helpers for rendering HTML
+      unquote(html_helpers())
+    end
+  end
+
+  defp html_helpers do
+    quote do
+      # HTML escaping functionality
+      import Phoenix.HTML
+      # Core UI components and translation
+      import FirestarterWeb.CoreComponents
+      import FirestarterWeb.Gettext
+
+      # Shortcut for generating JS commands
+      alias Phoenix.LiveView.JS
+
+      # Routes generation with the ~p sigil
+      unquote(verified_routes())
+    end
+  end
+
+  def verified_routes do
+    quote do
+      use Phoenix.VerifiedRoutes,
+        endpoint: FirestarterWeb.Endpoint,
+        router: FirestarterWeb.Router,
+        statics: FirestarterWeb.static_paths()
     end
   end
 
   def live_component do
     quote do
       use Phoenix.LiveComponent
+
+      import FirestarterWeb.Flash, only: [put_flash!: 3]
 
       unquote(view_helpers())
     end

@@ -164,3 +164,7 @@
   border-radius: 5px;
   cursor: pointer;
 }
+
+.list-container {
+  background: #f2f5f8 !important;
+}

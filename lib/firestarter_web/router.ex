@@ -27,6 +27,7 @@ defmodule FirestarterWeb.Router do
     live "/login", LoginLive
     live "/foo", FooLive
     live "/tasks", TasksLive
+    live "/showroom", ShowroomLive
   end
 
   scope "/api", FirestarterWeb do

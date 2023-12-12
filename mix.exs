@@ -54,7 +54,8 @@ defmodule Firestarter.MixProject do
       {:bcrypt_elixir, "~> 2.0"},
       {:plug_crypto, "~> 1.0"},
       {:tesla, "~> 1.4"},
-      {:tailwind, "~> 0.1", runtime: Mix.env() == :dev}
+      {:tailwind, "~> 0.1", runtime: Mix.env() == :dev},
+      {:heroicons_liveview, "~> 0.3.0"}
     ]
   end
 

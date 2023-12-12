@@ -126,12 +126,12 @@ end
     end
   end
 
-  # def reorder(conn, %{"id" => id, "above_id" => above_id, "below_id" => below_id}) do
-  #   case Tasks.reorder_task(id, above_id, below_id) do
-  #     {:ok, task} ->
-  #       conn |> put_status(:ok) |> json(%{task: task})
-  #     {:error, changeset} ->
-  #       conn |> put_status(:unprocessable_entity) |> json(%{errors: changeset.errors})
-  #   end
-  # end
+  def reorder(conn, %{"id" => id, "above_id" => above_id, "below_id" => below_id}) do
+    case Tasks.reorder_task(id, above_id, below_id) do
+      {:ok, task} ->
+        conn |> put_status(:ok) |> json(%{task: task})
+      {:error, changeset} ->
+        conn |> put_status(:unprocessable_entity) |> json(%{errors: changeset.errors})
+    end
+  end
 end

@@ -65,19 +65,23 @@ defmodule Firestarter.Tasks do
     atom_attrs = Enum.into(attrs, %{}, fn {k, v} -> {String.to_existing_atom(k), v} end)
     user_id = atom_attrs[:user_id]
 
-    highest_rank =
+    # Get the task with the highest rank for the user
+    highest_rank_task =
       Task
       |> where([t], t.user_id == ^user_id)
-      |> select([t], max(type(t.rank, :integer)))
+      |> order_by([t], desc: t.rank)
+      |> limit(1)
       |> Repo.one()
 
-    new_rank = Integer.to_string((highest_rank || 0) + 1)
+    new_rank = compute_new_rank_for_creation(highest_rank_task)
 
     %Task{}
     |> Task.changeset(Map.put(atom_attrs, :rank, new_rank))
     |> Repo.insert()
   end
 
+  defp compute_new_rank_for_creation(nil), do: "10000" # Default rank for first task
+  defp compute_new_rank_for_creation(task), do: Integer.to_string(String.to_integer(task.rank) + 1000)
 
   @doc """
   Updates a task.
@@ -126,14 +130,73 @@ defmodule Firestarter.Tasks do
     Task.changeset(task, attrs)
   end
 
-  # def reorder_task(id, above_id, below_id) do
-  #   above_task = get_task(above_id)
-  #   below_task = get_task(below_id)
-  #   new_rank = Firestarter.Tasks.Ranking.generate_rank(above_task.rank, below_task.rank)
+  @doc """
+  Reorders a task based on the provided above and below task IDs.
+  """
+  def reorder_task(task_id, above_id, below_id) do
+    task = Repo.get(Task, task_id)
 
-  #   task = Repo.get!(Task, id)
-  #   changeset = Task.changeset(task, %{rank: new_rank})
+    # Fetch the tasks immediately above and below the one being moved
+    above_task = if above_id, do: Repo.get(Task, above_id), else: nil
+    below_task = if below_id, do: Repo.get(Task, below_id), else: nil
 
-  #   Repo.update(changeset)
-  # end
+    new_rank = compute_new_rank(above_task, below_task)
+
+    task
+    |> Task.changeset(%{rank: new_rank})
+    |> Repo.update()
+  end
+
+
+  defp compute_new_rank(nil, nil), do: "1000" # Initial rank when no tasks are present
+
+  defp compute_new_rank(above_task, nil) do
+    increment_rank(above_task.rank, 1000)
+  end
+
+  defp compute_new_rank(nil, below_task) do
+    decrement_rank(below_task.rank, 1000)
+  end
+
+  defp compute_new_rank(above_task, below_task) do
+    above_rank = String.to_integer(above_task.rank)
+    below_rank = String.to_integer(below_task.rank)
+
+    # Compute the average and ensure it's even
+    average_rank = div(above_rank + below_rank, 2)
+    new_rank = if rem(average_rank, 2) == 0, do: average_rank, else: average_rank + 1
+
+    # Ensure the new rank is unique
+    ensure_unique_rank(new_rank)
+  end
+
+  defp increment_rank(rank, _value) do
+    # Increment by 10 ensuring the new rank is unique and even
+    new_rank = String.to_integer(rank) + 10
+    ensure_unique_rank(new_rank)
+  end
+
+  defp decrement_rank(rank, _value) do
+    # Decrement by 10 ensuring the new rank is unique and even
+    new_rank = String.to_integer(rank) - 10
+    ensure_unique_rank(new_rank)
+  end
+
+  defp ensure_unique_rank(rank) do
+    # Check if the rank exists in the database
+    exists = Repo.exists?(from(t in Task, where: t.rank == ^Integer.to_string(rank)))
+
+    if exists do
+      # If it exists, increment or decrement by 2 until a unique even rank is found
+      find_unique_even_rank(rank)
+    else
+      Integer.to_string(rank)
+    end
+  end
+
+  defp find_unique_even_rank(rank) do
+    new_rank = rank + 2
+    exists = Repo.exists?(from(t in Task, where: t.rank == ^Integer.to_string(new_rank)))
+    if exists, do: find_unique_even_rank(new_rank), else: Integer.to_string(new_rank)
+  end
 end

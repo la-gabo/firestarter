@@ -10,6 +10,7 @@ defmodule Firestarter.Tasks.Task do
     field :completed, :boolean, default: false
     field :rank, :string
 
+    belongs_to :list, Firestarter.Tasks.List
     belongs_to :user, Firestarter.Accounts.User
 
     timestamps()

@@ -18,9 +18,11 @@ defmodule Firestarter.Accounts.User do
     field :password, :string, virtual: true, redact: true
 
     has_many :tasks, Firestarter.Tasks.Task
+    has_many :lists, Firestarter.Tasks.List, foreign_key: :user_id
 
     timestamps()
   end
+
 
   @doc """
   Generates a changeset based on the user schema and form parameters.

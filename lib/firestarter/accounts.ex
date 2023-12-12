@@ -53,7 +53,7 @@ defmodule Firestarter.Accounts do
     changeset = User.changeset(%User{}, attrs)
 
     if changeset.valid? do
-      {:ok, hashed_password} = Bcrypt.hash_pwd_salt(changeset.changes.password)
+      hashed_password = Bcrypt.hash_pwd_salt(changeset.changes.password)
       changeset
       |> Ecto.Changeset.put_change(:password_hash, hashed_password)
       |> Repo.insert()
