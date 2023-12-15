@@ -4,7 +4,7 @@ defmodule Firestarter.Tasks.List do
 
   schema "lists" do
     field :title, :string
-    field :rank, :decimal
+    field :rank, :string
 
     has_many :tasks, Firestarter.Tasks.Task, foreign_key: :list_id
     belongs_to :owner, Firestarter.Accounts.User, foreign_key: :user_id

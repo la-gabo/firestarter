@@ -12,7 +12,6 @@ defmodule FirestarterWeb.RollView do
   def render("roll.json", _), do: %{status: "error"}
 
   def render("show.json", %{rolls: rolls}) do
-    IO.inspect(rolls, label: "rolls")
     %{data: render_many(rolls, __MODULE__, "roll.json")}
   end
 end

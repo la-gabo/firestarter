@@ -1,4 +1,4 @@
-defmodule Firestarter.TaskClient do
+defmodule Firestarter.ListClient do
   use Tesla
 
   plug Tesla.Middleware.BaseUrl, "http://localhost:4000/api"
@@ -7,32 +7,32 @@ defmodule Firestarter.TaskClient do
   @doc """
   Fetch all tasks for a specific user, using the access token for authentication.
   """
-  def fetch_user_tasks(access_token) do
+  def fetch_user_lists(access_token) do
     headers = [{"Authorization", "Bearer #{access_token}"}]
-    get("/tasks", headers: headers)
+    get("/lists", headers: headers)
   end
 
   @doc """
   Create a new task for a user.
   """
-  def create_user_task(access_token, task_params) do
+  def create_user_list(access_token, list_params) do
     headers = [{"Authorization", "Bearer #{access_token}"}]
-    post("/tasks", %{task: task_params}, headers: headers)
+    post("/lists", %{list: list_params}, headers: headers)
   end
 
   @doc """
   Update a specific task for a user.
   """
-  def update_user_task(access_token, task_id, task_params) do
+  def update_user_list(access_token, list_id, list_params) do
     headers = [{"Authorization", "Bearer #{access_token}"}]
-    put("/tasks/#{task_id}", %{task: task_params}, headers: headers)
+    put("/lists/#{list_id}", %{task: list_params}, headers: headers)
   end
 
   @doc """
   Delete a specific task for a user.
   """
-  def delete_user_task(access_token, task_id) do
+  def delete_user_list(access_token, list_id) do
     headers = [{"Authorization", "Bearer #{access_token}"}]
-    delete("/tasks/#{task_id}", headers: headers)
+    delete("/lists/#{list_id}", headers: headers)
   end
 end

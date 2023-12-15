@@ -167,4 +167,23 @@
 
 .list-container {
   background: #f2f5f8 !important;
+  max-height: 78vh;
+  overflow-y: auto;
+}
+
+#dropdown {
+  transition: all 0.3s ease;
+  transform: translateY(-10px);
+  visibility: hidden;
+  opacity: 0;
+}
+
+.phx-click-loading #dropdown {
+  transform: translateY(0);
+  visibility: visible;
+  opacity: 1;
+}
+
+.drag-ghost {
+  opacity: 0;
 }

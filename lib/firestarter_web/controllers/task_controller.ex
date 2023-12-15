@@ -21,10 +21,11 @@ defmodule FirestarterWeb.TaskController do
         render(conn, "index.json", tasks: tasks)
       {:error, _reason} ->
         conn
-        |> put_status(:unathorized)
+        |> put_status(:unauthorized)
         |> json(%{error: "unauthorized"})
     end
   end
+
 
   @doc """
   Creates a new task and renders the task if successful.
@@ -126,8 +127,9 @@ end
     end
   end
 
-  def reorder(conn, %{"id" => id, "above_id" => above_id, "below_id" => below_id}) do
-    case Tasks.reorder_task(id, above_id, below_id) do
+  def reorder(conn, %{"id" => id, "above_id" => above_id, "below_id" => below_id, "list_id" => list_id}) do
+    IO.inspect list_id
+    case Tasks.reorder_task(id, above_id, below_id, list_id) do
       {:ok, task} ->
         conn |> put_status(:ok) |> json(%{task: task})
       {:error, changeset} ->

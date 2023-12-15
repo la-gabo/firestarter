@@ -31,17 +31,44 @@ let Hooks = {};
 
 Hooks.Sortable = {
   mounted() {
+    let group = this.el.dataset.group;
     let sorter = new Sortable(this.el, {
+      group: group ? group : undefined,
       animation: 150,
       delay: 100,
       dragClass: "drag-item",
       ghostClass: "drag-ghost",
       forceFallback: true,
       onEnd: (e) => {
-        let params = { old: e.oldIndex, new: e.newIndex, ...e.item.dataset };
+        const itemId = e.to.id;
+        // Extracts the number after "list_" in the item id, if present
+        const listId = itemId.includes("list_")
+          ? itemId.split("list_")[1]
+          : null;
+
+        let params = {
+          old: e.oldIndex,
+          new: e.newIndex,
+          to: e.to.dataset,
+          ...e.item.dataset,
+          list_id: listId, // Now params includes the extracted list_id
+        };
+
         this.pushEventTo(this.el, "reposition", params);
       },
     });
+  },
+};
+
+Hooks.Dropdown = {
+  mounted() {
+    this.el.addEventListener("click", (e) => e.stopPropagation());
+    document.addEventListener("click", () => this.pushEvent("close-dropdown"));
+  },
+  destroyed() {
+    document.removeEventListener("click", () =>
+      this.pushEvent("close-dropdown")
+    );
   },
 };
 

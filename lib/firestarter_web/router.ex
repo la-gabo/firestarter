@@ -50,6 +50,7 @@ defmodule FirestarterWeb.Router do
     resources "/users", UserController, except: [:new, :edit, :create]
 
     post "/tasks/:id/reorder", TaskController, :reorder
+    resources "/lists", ListController, except: [:new, :edit]
   end
 
   # Enables LiveDashboard only for development

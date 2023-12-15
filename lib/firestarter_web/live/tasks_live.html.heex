@@ -1,0 +1,121 @@
+<div>
+  <!-- Header Section -->
+  <div class="flex items-center justify-between my-12">
+    <div class="flex flex-col justify-between">
+      <div class="flex gap-8">
+        <FUI.text_header text="Firestarter" />
+        <div class="flex gap-3">
+          <FUI.avatar_icon initials="SF" />
+          <FUI.avatar_icon initials="GO" />
+          <FUI.icon_button phx_click="some_action" icon_name={:plus} button_class="text-gray-500 hover:text-gray-700" />
+        </div>
+      </div>
+      <div class="mt-4">
+        <FUI.text_subheader text="Gil Ocampo Board" />
+      </div>
+    </div>
+    <!-- Search and Action Section -->
+    <div class="flex gap-3 items-center">
+      <FUI.input_with_icon phx_change="search" placeholder="Search..." icon="search-icon-class" />
+      <FUI.outline_button_with_icon
+        phx_click="show-people"
+        icon_name={:users}
+        text="People"
+      >
+        <:popover>
+          <%= if @popover_people_show do %>
+            <div class="mt-4 bg-gray-50 rounded-2xl w-80 h-96 p-8 shadow-md overflow-y-auto z-50">
+              <div class="flex flex-col gap-3">
+                <%= for item <- @assignees do %>
+                  <FUI.checkbox phx_change="check-this" field={%{id: item.id, value: item.value}} text={item.text} group="checkbox_group" />
+                <% end %>
+              </div>
+            </div>
+          <% end %>
+        </:popover>
+      </FUI.outline_button_with_icon>
+      <FUI.outline_button_with_icon
+        phx_click="show-labels"
+        icon_name={:bookmark}
+        text="Labels"
+      >
+        <:popover>
+          <%= if @popover_labels_show do %>
+            <div class="mt-4 bg-gray-50 rounded-2xl w-80 h-96 p-8 shadow-md overflow-y-auto">
+              <div class="flex flex-col gap-3">
+                <%= for item <- @assignees do %>
+                  <FUI.checkbox phx_change="check-this" field={%{id: item.id, value: item.value}} text={item.text} group="checkbox_group" />
+                <% end %>
+              </div>
+            </div>
+          <% end %>
+        </:popover>
+      </FUI.outline_button_with_icon>
+    </div>
+  </div>
+  <!-- Main Content Area -->
+  <div class="mx-auto overflow-x-auto">
+    <div style="min-width: 960px;">
+      <div class="grid grid-flow-col gap-12" style="grid-auto-columns: minmax(320px, 1fr);">
+        <FUI.card_container>
+          <:card_content>
+            <div class="mx-4">
+              <form phx-submit="add-list">
+                <FUI.text_header class="mt-6 mb-8 text-2xl font-semibold" text="Add new list" />
+                <input name="new_list_title" value={@new_list_title} class="bg-blue-100" placeholder="Type new list name here"/>
+                <FUI.button type="submit" text="Add List" />
+              </form>
+            </div>
+          </:card_content>
+        </FUI.card_container>
+        <!-- Loop over each list -->
+        <%= for list <- @lists do %>
+          <FUI.card_container group={list["id"]}>
+            <:card_content>
+              <div class="mx-4">
+                <!-- List Title -->
+                <FUI.text_header class="mt-6 mb-8 text-2xl font-semibold" text={list["title"]} />
+
+                <!-- Tasks for this list -->
+                <div class="flex flex-col gap-7 pb-8" data-group="tasks_list" phx-hook="Sortable" id={"list_" <> Integer.to_string(list["id"])}>
+                  <%= for task <- Enum.filter(@tasks, fn task -> task["list_id"] == list["id"] end) do %>
+                    <div data-id={task["id"]}>
+                      <FUI.card phx_click="show-task-control" phx_value_id={task["id"]} title={task["title"]} description="This is a description" tags={["Design", "Urgent"]}>
+                        <:popover>
+                          <%= if @active_card_id == task["id"] do %>
+                            <div class="mt-4 bg-gray-50 rounded-2xl w-40 h-auto p-8 shadow-md overflow-y-auto">
+                              <div class="flex flex-col gap-3">
+                                <button phx-value-id={task["id"]} phx-click="move-up" class="text-lg hover:text-blue-600 focus:text-gray-700">Move up</button>
+                                <button phx-value-id={task["id"]} phx-click="move-down" class="text-lg hover:text-blue-600 focus:text-gray-700">Move down</button>
+                                <button phx-value-id={task["id"]} phx-click="toggle-completed" class="text-lg hover:text-blue-600 focus:text-gray-700">Complete</button>
+                                <button phx-value-id={task["id"]} phx-click="delete-task" class="text-lg hover:text-blue-600 focus:text-gray-700">Delete</button>
+                              </div>
+                            </div>
+                          <% end %>
+                        </:popover>
+                      </FUI.card>
+                    </div>
+                  <% end %>
+                </div>
+                <!-- Add Task Form -->
+                <FUI.card_plain>
+                  <:card_content>
+                    <form phx-submit="add-task">
+                      <div>
+                        <input name="list_id" value={list["id"]} hidden />
+                        <FUI.textarea name="new_task_title" value={@new_task_title} />
+                      </div>
+                      <div class="mt-4">
+                        <FUI.button type="submit" text="Add Task"/>
+                      </div>
+                    </form>
+                  </:card_content>
+                </FUI.card_plain>
+              </div>
+            </:card_content>
+          </FUI.card_container>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>
