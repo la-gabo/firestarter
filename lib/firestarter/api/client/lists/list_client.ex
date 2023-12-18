@@ -25,7 +25,7 @@ defmodule Firestarter.ListClient do
   """
   def update_user_list(access_token, list_id, list_params) do
     headers = [{"Authorization", "Bearer #{access_token}"}]
-    put("/lists/#{list_id}", %{task: list_params}, headers: headers)
+    put("/lists/#{list_id}", %{list: list_params}, headers: headers)
   end
 
   @doc """

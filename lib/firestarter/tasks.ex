@@ -22,11 +22,19 @@ defmodule Firestarter.Tasks do
   end
 
   def list_tasks_for_user(user_id) do
-    from(t in Task, where: t.user_id == ^user_id, order_by: t.rank) |> Repo.all()
+    Task
+    |> where([t], t.user_id == ^user_id)
+    |> order_by([t], asc: t.rank)
+    |> preload(:assignee) # Preload the assignee
+    |> Repo.all()
   end
 
   def list_tasks_for_list(user_id) do
-    from(t in Task, where: t.user_id == ^user_id , order_by: t.rank) |> Repo.all()
+    Task
+    |> where([t], t.user_id == ^user_id)
+    |> order_by([t], asc: t.rank)
+    |> preload(:assignee) # Preload the assignee
+    |> Repo.all()
   end
 
   @doc """
@@ -45,10 +53,12 @@ defmodule Firestarter.Tasks do
   """
   def get_task(id) do
     Repo.get(Task, id)
+    |> Repo.preload(:assignee)
   end
 
   def get_task_for_user(task_id, user_id) do
     Repo.get_by(Task, [id: task_id, user_id: user_id])
+    |> Repo.preload(:assignee)
   end
 
   @doc """
@@ -144,8 +154,6 @@ defmodule Firestarter.Tasks do
     below_task = if below_id, do: Repo.get(Task, below_id), else: nil
 
     new_rank = compute_new_rank(above_task, below_task)
-
-    IO.inspect(list_id, label: "++WUW")
 
     task
     |> Task.changeset(%{rank: new_rank, list_id: list_id})

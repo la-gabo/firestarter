@@ -10,6 +10,7 @@ defmodule Firestarter.Tasks.Task do
     field :completed, :boolean, default: false
     field :rank, :string
 
+    belongs_to :assignee, Firestarter.Accounts.User
     belongs_to :list, Firestarter.Tasks.List
     belongs_to :user, Firestarter.Accounts.User
 
@@ -22,7 +23,7 @@ defmodule Firestarter.Tasks.Task do
   """
   def changeset(task, attrs) do
     task
-    |> cast(attrs, [:title, :completed, :rank, :user_id, :list_id])
+    |> cast(attrs, [:title, :completed, :rank, :user_id, :list_id, :assignee_id])
     |> validate_required([:title, :user_id, :rank, :list_id])
     |> validate_length(:title, min: 3, max: 100)
   end

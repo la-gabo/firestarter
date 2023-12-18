@@ -2,6 +2,7 @@ defmodule FirestarterWeb.TasksLive do
   use FirestarterWeb, :live_view
   alias Firestarter.TaskClient
   alias Firestarter.ListClient
+  alias Firestarter.AccountClient
   alias FirestarterWeb.CoreComponents, as: FUI
 
   def mount(_params, session, socket) do
@@ -11,17 +12,24 @@ defmodule FirestarterWeb.TasksLive do
     if access_token = socket.assigns.access_token do
       Task.start(fn -> fetch_tasks(access_token, liveview_pid) end)
       Task.start(fn -> fetch_lists(access_token, liveview_pid) end)
+      Task.start(fn -> fetch_users(access_token, liveview_pid) end)
     end
 
     {:ok, socket}
   end
 
   def handle_info({:tasks_fetched, tasks}, socket) do
+    IO.inspect tasks
+    IO.puts "HELLO"
     {:noreply, assign(socket, tasks: tasks)}
   end
 
   def handle_info({:lists_fetched, lists}, socket) do
     {:noreply, assign(socket, lists: lists)}
+  end
+
+  def handle_info({:users_fetched, users}, socket) do
+    {:noreply, assign(socket, users: users)}
   end
 
   defp fetch_tasks(access_token, liveview_pid) do
@@ -40,6 +48,14 @@ defmodule FirestarterWeb.TasksLive do
     end
   end
 
+  defp fetch_users(access_token, liveview_pid) do
+    case AccountClient.fetch_all_users(access_token) do
+      {:ok, response} ->
+        send(liveview_pid, {:users_fetched, response.body["data"]})
+      {:error, _reason} -> IO.puts("fetch users error")
+    end
+  end
+
   def handle_event("add-task", params, socket) do
     %{"new_task_title" => title, "list_id" => id} = params
     case TaskClient.create_user_task(socket.assigns.access_token, %{title: title, list_id: id}) do
@@ -52,30 +68,60 @@ defmodule FirestarterWeb.TasksLive do
     end
   end
 
+  def handle_event("assign-user", %{"id" => task_id, "user-id" => user_id}, socket) do
+    task_params = %{"assignee_id" => String.to_integer(user_id)}
+    case TaskClient.update_user_task(socket.assigns.access_token, String.to_integer(task_id), task_params) do
+      {:ok, _response} ->
+        socket = fetch_and_refresh_tasks(socket)
+        {:noreply, put_flash(socket, :info, "Task assigned successfully")}
+      {:error, _reason} ->
+        {:noreply, log_error("Error assigning task", socket)}
+    end
+  end
+
   def handle_event("add-list", %{"new_list_title" => title}, socket) do
     access_token = socket.assigns.access_token
     list_params = %{title: title}
 
     case ListClient.create_user_list(access_token, list_params) do
       {:ok, _response} ->
-        # Fetch updated lists after adding a new one
-        case ListClient.fetch_user_lists(access_token) do
-          {:ok, updated_response} ->
-            # Update the lists in the socket's assigns
-            updated_lists = updated_response.body["data"]
-            socket = assign(socket, lists: updated_lists)
-            {:noreply, put_flash(socket, :info, "List added successfully")}
-
-          {:error, fetch_error} ->
-            # Handle error in fetching updated lists
-            IO.puts("Error fetching updated lists: #{inspect(fetch_error)}")
-            {:noreply, put_flash(socket, :error, "Error fetching updated lists")}
-        end
+        socket = fetch_and_refresh_lists(socket, access_token)
+        {:noreply, put_flash(socket, :info, "List added successfully")}
 
       {:error, reason} ->
-        # Handle error in creating a new list
         IO.puts("Error creating list: #{inspect(reason)}")
         {:noreply, put_flash(socket, :error, "Error creating list")}
+    end
+  end
+
+  def handle_event("show-assign-user", %{"id" => task_id}, socket) do
+    {:noreply, toggle_show_assign_user(socket, task_id)}
+  end
+
+  def handle_event("archive-list", %{"id" => list_id}, socket) do
+    list_id = String.to_integer(list_id)
+    access_token = socket.assigns.access_token
+
+    archive_params = %{"status" => "archived"} # Define the parameters for archiving
+    case Firestarter.ListClient.update_user_list(access_token, list_id, archive_params) do
+      {:ok, _updated_list} ->
+        socket = fetch_and_refresh_lists(socket, access_token)
+        {:noreply, put_flash(socket, :info, "List archived successfully")}
+
+      {:error, _reason} ->
+        {:noreply, put_flash(socket, :error, "Error archiving list")}
+    end
+  end
+
+  defp fetch_and_refresh_lists(socket, access_token) do
+    case ListClient.fetch_user_lists(access_token) do
+      {:ok, response} ->
+        updated_lists = response.body["data"]
+        assign(socket, lists: updated_lists)
+
+      {:error, _reason} ->
+        IO.puts("Error fetching lists")
+        socket
     end
   end
 
@@ -156,9 +202,11 @@ defmodule FirestarterWeb.TasksLive do
         %{id: "checkbox1", value: "Maria Hiwaga", text: "Maria Hiwaga"},
         %{id: "checkbox2", value: "Jimmy Neutron", text: "Jimmy Neutron"},
       ],
+      users: [],
       popover_task_control_show: false,
       active_card_id: 0,
-      new_list_title: nil
+      new_list_title: nil,
+      assign_user_show: false
     )
   end
 
@@ -192,18 +240,23 @@ defmodule FirestarterWeb.TasksLive do
   end
 
   defp toggle_show_task_control(socket, id) do
-    # Convert id to integer if it is a string that represents an integer
     id = case Integer.parse(id) do
       {parsed_id, ""} -> parsed_id
       _ -> id
     end
 
-    # Check if the current active_card_id matches the clicked card's id
     current_id = socket.assigns.active_card_id
     new_active_id = if current_id == id, do: nil, else: id
 
-    # Assign the new_active_id to the socket's assigns
-    assign(socket, active_card_id: new_active_id)
+    assign(socket, popover_labels_show: true, active_card_id: new_active_id)
+  end
+
+  defp toggle_show_assign_user(socket, task_id) do
+    if socket.assigns.assign_user_show do
+      assign(socket, assign_user_show: false, active_card_id: nil)
+    else
+      assign(socket, assign_user_show: true, popover_labels_show: false, dropdown_hook: "Dropdown", active_card_id: String.to_integer(task_id))
+    end
   end
 
   defp toggle_show_people(socket) do

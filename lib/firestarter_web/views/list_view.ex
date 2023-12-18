@@ -15,7 +15,8 @@ defmodule FirestarterWeb.ListView do
       id: list.id,
       title: list.title,
       rank: list.rank,
-      user_id: list.user_id
+      user_id: list.user_id,
+      status: list.status
     }
   end
 end

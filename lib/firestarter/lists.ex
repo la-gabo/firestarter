@@ -43,8 +43,9 @@ defmodule Firestarter.Lists do
   @doc """
   Updates a list.
   """
-  def update_list(%List{} = list, attrs) do
-    list
+  def update_list(id, attrs) do
+    id
+    |> get_list!()
     |> List.changeset(attrs)
     |> Repo.update()
   end

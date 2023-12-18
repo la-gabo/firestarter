@@ -5,8 +5,12 @@
       <div class="flex gap-8">
         <FUI.text_header text="Firestarter" />
         <div class="flex gap-3">
-          <FUI.avatar_icon initials="SF" />
-          <FUI.avatar_icon initials="GO" />
+          <%= for user <- Enum.take(@users, 5) do %>
+            <FUI.avatar_icon initials={String.slice(user["email"], 0, 2) |> String.upcase()} />
+          <% end %>
+          <%= if length(@users) > 5 do %>
+            <FUI.avatar_icon initials={"+#{length(@users) - 5}"} />
+          <% end %>
           <FUI.icon_button phx_click="some_action" icon_name={:plus} button_class="text-gray-500 hover:text-gray-700" />
         </div>
       </div>
@@ -26,8 +30,8 @@
           <%= if @popover_people_show do %>
             <div class="mt-4 bg-gray-50 rounded-2xl w-80 h-96 p-8 shadow-md overflow-y-auto z-50">
               <div class="flex flex-col gap-3">
-                <%= for item <- @assignees do %>
-                  <FUI.checkbox phx_change="check-this" field={%{id: item.id, value: item.value}} text={item.text} group="checkbox_group" />
+                <%= for item <- @users do %>
+                  <FUI.checkbox phx_change="check-this" field={%{id: "user-#{item["id"]}", value: item["email"]}} text={item["email"]} group="checkbox_group" />
                 <% end %>
               </div>
             </div>
@@ -40,7 +44,7 @@
         text="Labels"
       >
         <:popover>
-          <%= if @popover_labels_show do %>
+          <%= if @popover_labels_show and false do %>
             <div class="mt-4 bg-gray-50 rounded-2xl w-80 h-96 p-8 shadow-md overflow-y-auto">
               <div class="flex flex-col gap-3">
                 <%= for item <- @assignees do %>
@@ -69,30 +73,47 @@
           </:card_content>
         </FUI.card_container>
         <!-- Loop over each list -->
-        <%= for list <- @lists do %>
+        <%= for list <- Enum.filter(@lists, fn list -> list["status"] == "active" end) do %>
           <FUI.card_container group={list["id"]}>
             <:card_content>
               <div class="mx-4">
                 <!-- List Title -->
-                <FUI.text_header class="mt-6 mb-8 text-2xl font-semibold" text={list["title"]} />
+                <div class="flex justify-between items-cente mt-6 mb-8">
+                  <FUI.text_header class="text-2xl font-semibold" text={list["title"]} />
+                  <button phx-click="archive-list" phx-value-id={list["id"]} class="btn-archive">Archive</button>
+                </div>
 
                 <!-- Tasks for this list -->
                 <div class="flex flex-col gap-7 pb-8" data-group="tasks_list" phx-hook="Sortable" id={"list_" <> Integer.to_string(list["id"])}>
                   <%= for task <- Enum.filter(@tasks, fn task -> task["list_id"] == list["id"] end) do %>
                     <div data-id={task["id"]}>
-                      <FUI.card phx_click="show-task-control" phx_value_id={task["id"]} title={task["title"]} description="This is a description" tags={["Design", "Urgent"]}>
+                      <FUI.card phx_click="show-task-control" assignee={%{"email" => "mock@example.com", "id" => 1}} phx_value_id={task["id"]} title={task["title"]} description="This is a description" tags={["Design", "Urgent"]}>
                         <:popover>
-                          <%= if @active_card_id == task["id"] do %>
+                          <%= if @popover_labels_show and @active_card_id == task["id"] do %>
                             <div class="mt-4 bg-gray-50 rounded-2xl w-40 h-auto p-8 shadow-md overflow-y-auto">
                               <div class="flex flex-col gap-3">
+                                <button phx-value-id={task["id"]} phx-click="show-assign-user" class="text-lg hover:text-blue-600 focus:text-gray-700">Assign user</button>
                                 <button phx-value-id={task["id"]} phx-click="move-up" class="text-lg hover:text-blue-600 focus:text-gray-700">Move up</button>
                                 <button phx-value-id={task["id"]} phx-click="move-down" class="text-lg hover:text-blue-600 focus:text-gray-700">Move down</button>
-                                <button phx-value-id={task["id"]} phx-click="toggle-completed" class="text-lg hover:text-blue-600 focus:text-gray-700">Complete</button>
                                 <button phx-value-id={task["id"]} phx-click="delete-task" class="text-lg hover:text-blue-600 focus:text-gray-700">Delete</button>
                               </div>
                             </div>
                           <% end %>
                         </:popover>
+                        <:extra_content>
+                          <%= if @assign_user_show and @active_card_id == task["id"] do %>
+                            <div class="mt-4">
+                              <FUI.text_subheader text="Click user to assign" />
+                              <div class="mt-4" style="max-height: 100px; overflow-x: hidden; overflow-y: auto;">
+                                <%= for user <- @users do %>
+                                  <button phx-click="assign-user" phx-value-id={task["id"]} phx-value-user-id={user["id"]} class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                    <%= user["email"] %>
+                                  </button>
+                                <% end %>
+                              </div>
+                            </div>
+                          <% end %>
+                        </:extra_content>
                       </FUI.card>
                     </div>
                   <% end %>

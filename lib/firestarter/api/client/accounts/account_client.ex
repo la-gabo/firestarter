@@ -11,4 +11,12 @@ defmodule Firestarter.AccountClient do
     body = %{email: email, password: password}
     post("/sessions", body)
   end
+
+  @doc """
+  Fetches a list of all users.
+  """
+  def fetch_all_users(access_token) do
+    headers = [{"Authorization", "Bearer #{access_token}"}]
+    get("/users", headers: headers)
+  end
 end

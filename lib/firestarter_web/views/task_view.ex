@@ -16,7 +16,16 @@ defmodule FirestarterWeb.TaskView do
       title: task.title,
       completed: task.completed,
       rank: task.rank,
-      list_id: task.list_id
+      list_id: task.list_id,
+      assignee: render_assignee(task.assignee)
+    }
+  end
+
+  defp render_assignee(nil), do: nil
+  defp render_assignee(assignee) do
+    %{
+      id: assignee.id,
+      email: assignee.email
     }
   end
 end
