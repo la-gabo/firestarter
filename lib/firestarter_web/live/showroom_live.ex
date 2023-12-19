@@ -110,6 +110,14 @@ defmodule FirestarterWeb.ShowroomLive do
           <FUI.checkbox phx_change="check-this" field={%{id: item.id, value: item.value}} text={item.text} group="checkbox_group" />
         <% end %>
       </FUI.container>
+
+      <FUI.container class="p-4 flex-col flex gap-2" title="Select">
+        <FUI.select
+          field={%{id: "select_id", name: "select_name", label: "Select Label"}}
+          options={[{"option1", "Option 1"}, {"option2", "Option 2"}]}
+          phx_change="handle_select_change"
+        />
+      </FUI.container>
     </div>
     """
   end

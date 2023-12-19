@@ -87,7 +87,7 @@
                 <div class="flex flex-col gap-7 pb-8" data-group="tasks_list" phx-hook="Sortable" id={"list_" <> Integer.to_string(list["id"])}>
                   <%= for task <- Enum.filter(@tasks, fn task -> task["list_id"] == list["id"] end) do %>
                     <div data-id={task["id"]}>
-                      <FUI.card phx_click="show-task-control" assignee={%{"email" => "mock@example.com", "id" => 1}} phx_value_id={task["id"]} title={task["title"]} description="This is a description" tags={["Design", "Urgent"]}>
+                      <FUI.card phx_click="show-task-control" assignee={task["assignee"] || %{"email" => "NA", "id" => nil}} phx_value_id={task["id"]} title={task["title"]} description="This is a description" tags={["Design", "Urgent"]}>
                         <:popover>
                           <%= if @popover_labels_show and @active_card_id == task["id"] do %>
                             <div class="mt-4 bg-gray-50 rounded-2xl w-40 h-auto p-8 shadow-md overflow-y-auto">

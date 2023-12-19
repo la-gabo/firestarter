@@ -19,8 +19,6 @@ defmodule FirestarterWeb.TasksLive do
   end
 
   def handle_info({:tasks_fetched, tasks}, socket) do
-    IO.inspect tasks
-    IO.puts "HELLO"
     {:noreply, assign(socket, tasks: tasks)}
   end
 
@@ -171,7 +169,6 @@ defmodule FirestarterWeb.TasksLive do
 
   def handle_event("reposition", params, socket) do
     %{"id" => id, "new" => new_index, "old" => old_index, "list_id" => list_id} = params
-    IO.inspect(list_id, label: "++LIST_ID")
     handle_reposition_event(String.to_integer(id), new_index, old_index, String.to_integer(list_id), socket)
   end
 
@@ -248,7 +245,7 @@ defmodule FirestarterWeb.TasksLive do
     current_id = socket.assigns.active_card_id
     new_active_id = if current_id == id, do: nil, else: id
 
-    assign(socket, popover_labels_show: true, active_card_id: new_active_id)
+    assign(socket, popover_labels_show: true, active_card_id: new_active_id, assign_user_show: false)
   end
 
   defp toggle_show_assign_user(socket, task_id) do

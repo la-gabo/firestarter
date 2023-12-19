@@ -14,7 +14,8 @@ defmodule FirestarterWeb.UserView do
     %{
       id: user.id,
       email: user.email,
-      password_hash: user.password_hash
+      password_hash: user.password_hash,
+      permission_id: user.permission_id
     }
   end
 end

@@ -19,4 +19,12 @@ defmodule Firestarter.AccountClient do
     headers = [{"Authorization", "Bearer #{access_token}"}]
     get("/users", headers: headers)
   end
+
+  @doc """
+  Updates a user's information.
+  """
+  def update_user(access_token, user_id, user_params) do
+    headers = [{"Authorization", "Bearer #{access_token}"}]
+    put("/users/#{user_id}", user_params, headers: headers)
+  end
 end

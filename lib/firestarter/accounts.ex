@@ -19,7 +19,7 @@ defmodule Firestarter.Accounts do
 
   """
   def list_users do
-    Repo.all(User)
+    Repo.all(from u in User, order_by: [asc: u.email], preload: [:permission])
   end
 
   @doc """
@@ -62,7 +62,7 @@ defmodule Firestarter.Accounts do
     end
   end
 
-  @doc """
+   @doc """
   Updates a user.
 
   ## Examples
@@ -79,6 +79,7 @@ defmodule Firestarter.Accounts do
     |> User.changeset(attrs)
     |> Repo.update()
   end
+
 
   @doc """
   Deletes a user.

@@ -220,15 +220,13 @@ defmodule FirestarterWeb.CoreComponents do
   attr :image_url, :string, default: nil # Optional image
   attr :tags, :list, default: [] # Optional list of tags
   attr :due_date, :string, default: "Dec 25"
-  attr :assignee, :map
+  attr :assignee, :map, default: nil
   attr :phx_click, :string, default: nil
   attr :phx_value_id, :string, default: nil
   slot :extra_content, optional: true
   slot :popover, optional: true
 
   def card(assigns) do
-    IO.inspect assigns
-
     ~H"""
     <div class="relative bg-white rounded-2xl py-10 px-6 border-b last:border-b-0 shadow-sm drag-ghost:opacity-0">
       <h3 class="text-2xl font-bold"><%= @title %></h3>
@@ -255,25 +253,8 @@ defmodule FirestarterWeb.CoreComponents do
           <Heroicons.Outline.clock class="h-5 w-5 text-gray-300" />
           <p class="text-lg text-gray-400"><%= @due_date %></p>
         </div>
-        <div class="flex items-center justify-between mt-6">
-          <% if @assignee do %>
-            <div class="flex gap-2 items-center">
-              <!-- Handling non-nil assignee -->
-              <div class="h-8 w-8 bg-blue-500 flex items-center justify-center rounded-full text-white text-sm font-semibold">
-                <%= String.slice(@assignee["email"], 0, 2) |> String.upcase() %>
-              </div>
-              <span><%= @assignee["email"] %></span>
-            </div>
-          <% else %>
-            <!-- Handling nil assignee -->
-            <div class="flex gap-2 items-center">
-              <div class="h-8 w-8 bg-gray-500 flex items-center justify-center rounded-full text-white text-sm font-semibold">
-                NA
-              </div>
-              <span>No Assignee</span>
-            </div>
-          <% end %>
-          <p>AHEBC</p>
+        <div class="flex items-center justify-between">
+          <p class="text-lg text-gray-400"><%= @assignee["email"] %></p>
         </div>
       </div>
       <%= if @extra_content do %>
@@ -390,4 +371,34 @@ defmodule FirestarterWeb.CoreComponents do
     </div>
     """
   end
+
+  @doc """
+  Renders a select dropdown.
+  """
+  attr :field, :any, required: true
+  attr :options, :list, required: true
+  attr :class, :string, default: "form-select block w-full mt-1 text-xl rounded-lg border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+  attr :phx_value_user_id, :string, default: nil
+
+  def select(assigns) do
+    ~H"""
+    <div class="mb-4">
+      <label for={@field.id} class="block text-gray-700 text-sm font-bold mb-2">
+        <%= @field.label %>
+      </label>
+      <div class="relative">
+        <select id={@field.id} name={@field.name} class={@class} phx-value-user_id={@phx_value_user_id}>
+          <%= for {key, val, opts} <- @options do %>
+            <%= if Keyword.get(opts, :selected) do %>
+              <option value={key} selected="selected"><%= val %></option>
+            <% else %>
+              <option value={key}><%= val %></option>
+            <% end %>
+          <% end %>
+        </select>
+      </div>
+    </div>
+    """
+  end
+
 end

@@ -1,4 +1,4 @@
-@token = eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJmaXJlc3RhcnRlciIsImV4cCI6MTcwMDYzMzc4NywiaWF0IjoxNzAwNjMxOTg3LCJpc3MiOiJmaXJlc3RhcnRlciIsImp0aSI6IjYyMWUwNDFlLWIwZjMtNGVjMC1iNzNmLTExOTc0OWJlNmJiNSIsIm5iZiI6MTcwMDYzMTk4Niwic3ViIjoiOCIsInR5cCI6ImFjY2VzcyIsInVzZXJfaWQiOjh9.DFmtph996v7AwNRsgTuzZhxsuCDi-V15lSKidubCogpcJzLgzNf7w3Fi6Ina82qvRVIrZJEzgZHWRv5JYQWy7Q
+@token = eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJmaXJlc3RhcnRlciIsImV4cCI6MTcwMjk3Nzc2NCwiaWF0IjoxNzAyOTc1OTY0LCJpc3MiOiJmaXJlc3RhcnRlciIsImp0aSI6ImQ3MTg5YmQzLTk1ZDQtNDgzNi1hODgxLTViMmRjZGQ5MDg5MCIsIm5iZiI6MTcwMjk3NTk2Mywic3ViIjoiMSIsInR5cCI6ImFjY2VzcyIsInVzZXJfaWQiOjF9.ieP27xBXEZQjulNapeT0ygulDb_qbFJHPmb0srmz3T4IGgUiv0BEJLubQ5ci9ckOBfEgkQrMDKWZ2qTgVVjCfw
 
 ### List all tasks
 GET http://localhost:4000/api/tasks
@@ -78,14 +78,14 @@ Content-Type: application/json
 ###
 
 ### Update an existing user
-PUT http://localhost:4000/api/users/1
+PUT http://localhost:4000/api/users/5
 Content-Type: application/json
 Authorization: Bearer {{token}}
 
 {
    "user": {
-     "email": "updateduser@example.com",
-     "password_hash": "updatedhashedpassword"
+    "email": "bridgitmendler+updated@gmail.com",
+    "permission_id": "1"
    }
 }
 
@@ -104,7 +104,7 @@ Content-Type: application/json
 
 {
   "email": "monsythejrt@example.com",
-  "password": "Cutepassw0rd!"
+  "password": "Cut1epass!"
 }
 
 ### Refresh Access Token
