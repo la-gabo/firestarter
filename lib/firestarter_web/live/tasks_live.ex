@@ -169,6 +169,7 @@ defmodule FirestarterWeb.TasksLive do
 
   def handle_event("reposition", params, socket) do
     %{"id" => id, "new" => new_index, "old" => old_index, "list_id" => list_id} = params
+    IO.inspect(list_id, label: "++LIST_ID")
     handle_reposition_event(String.to_integer(id), new_index, old_index, String.to_integer(list_id), socket)
   end
 

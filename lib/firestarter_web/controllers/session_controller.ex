@@ -12,19 +12,15 @@ defmodule FirestarterWeb.SessionController do
         {:ok, refresh_token} = Accounts.generate_refresh_token(user)
         max_age = 30 * 24 * 60 * 60 # Example: 30 days in seconds
 
-        conn = assign(conn, :access_token, access_token)
-
-        # secure token storage using cookies
         conn
+        |> put_session(:user_id, user.id) # Store user ID in session
         |> put_session(:access_token, access_token) # Store access token in session
         |> put_resp_cookie("refresh_token", refresh_token, http_only: true, secure: true, max_age: max_age)
         |> redirect(to: "/tasks") # Redirect to tasks page after successful login
-
       {:error, _reason} ->
         conn
         |> put_status(:unauthorized)
         |> json(%{error: "Invalid credentials"})
-        |> redirect(to: "/login")
     end
   end
 
